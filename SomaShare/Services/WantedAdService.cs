@@ -34,5 +34,8 @@ namespace SomaShare.Services
             _context.WantedAds.Remove(ad);
             return await _context.SaveChangesAsync() > 0;
         }
+
+
     }
+
 }

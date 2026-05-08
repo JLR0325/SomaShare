@@ -44,8 +44,16 @@ namespace SomaShare.Controllers
         {
             if (!ModelState.IsValid) return View(textbook);
             textbook.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            await _textbookService.CreateAsync(textbook);
-            return RedirectToAction(nameof(Index));
+            var success = await _textbookService.CreateAsync(textbook);
+
+            if (success)
+            {
+                // Redirect to Details page of the newly created textbook
+                return RedirectToAction(nameof(Details), new { id = textbook.Id });
+            }
+
+            // If save failed, stay on the form
+            return View(textbook);
         }
 
         public async Task<IActionResult> Edit(int id)
