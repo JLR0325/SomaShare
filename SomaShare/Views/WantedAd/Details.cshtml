@@ -1,0 +1,16 @@
+﻿@model SomaShare.Models.WantedAd
+@{
+    ViewData["Title"] = "Wanted Ad Details";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger">@Model.Title</h2>
+    <p>@Model.Description</p>
+
+    <p>
+        <strong>Posted by:</strong> @Model.User.FullName <br />
+        <strong>Date:</strong> @Model.PostedDate.ToString("dd MMM yyyy")
+    </p>
+
+    <a asp-controller="WantedAd" asp-action="Index" class="btn btn-secondary">Back to Ads</a>
+</div>

@@ -10,15 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//Authorize
-builder.Services.ConfigureApplicationCookie(options =>
+// Identity + cookie settings
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.LoginPath = "/Account/Login"; // redirect here if not logged in
-    options.AccessDeniedPath = "/Account/AccessDenied";
-});
-
-// Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
@@ -30,12 +24,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account/Login";
+    options.LoginPath = "/Account/Login";       // redirect here if not logged in
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
 // Business services
 builder.Services.AddScoped<TextbookService>();
+builder.Services.AddScoped<WantedAdService>();   // ✅ register WantedAdService
 builder.Services.AddScoped<OfferService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<ReviewService>();
@@ -55,7 +50,7 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<ApplicationDbContext>();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    await SomaShare.Data.DbInitializer.Initialize(context, userManager, roleManager);
+    await DbInitializer.Initialize(context, userManager, roleManager);
 }
 
 if (!app.Environment.IsDevelopment())

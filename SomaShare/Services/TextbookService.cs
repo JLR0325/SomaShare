@@ -9,40 +9,64 @@ namespace SomaShare.Services
         private readonly ApplicationDbContext _context;
         public TextbookService(ApplicationDbContext context) => _context = context;
 
-        public async Task<List<Textbook>> GetAllAsync(string? searchString, string? condition, string? campus,
-            decimal? minPrice, decimal? maxPrice, string? sortOrder, int page = 1, int pageSize = 10)
+        public async Task<List<Textbook>> GetAllAsync(
+            string? searchString,
+            string? condition,
+            string? campus,
+            decimal? minPrice,
+            decimal? maxPrice,
+            string? sortOrder,
+            int page = 1,
+            int pageSize = 10)
         {
-            var query = _context.Textbooks.Include(t => t.User).Where(t => !t.IsSold);
+            var query = _context.Textbooks
+                .Include(t => t.User)
+                .Where(t => !t.IsSold);
 
-            if (!string.IsNullOrEmpty(searchString))
+            // Keyword search
+            if (!string.IsNullOrWhiteSpace(searchString))
             {
                 string s = searchString.ToLower();
-                query = query.Where(t => t.Title.ToLower().Contains(s)
-                    || t.Author.ToLower().Contains(s)
-                    || t.ISBN.Contains(s));
+                query = query.Where(t =>
+                    t.Title.ToLower().Contains(s) ||
+                    t.Author.ToLower().Contains(s) ||
+                    t.ISBN.ToLower().Contains(s));
             }
+
+            // Condition filter
             if (!string.IsNullOrEmpty(condition))
                 query = query.Where(t => t.Condition == condition);
+
+            // Campus filter (case-insensitive)
             if (!string.IsNullOrEmpty(campus))
-                query = query.Where(t => t.Campus == campus);
+                query = query.Where(t => t.Campus.ToLower().Contains(campus.ToLower()));
+
+            // Price filters
             if (minPrice.HasValue)
                 query = query.Where(t => t.Price >= minPrice.Value);
             if (maxPrice.HasValue)
                 query = query.Where(t => t.Price <= maxPrice.Value);
 
+            // Sorting
             query = sortOrder switch
             {
                 "price_asc" => query.OrderBy(t => t.Price),
                 "price_desc" => query.OrderByDescending(t => t.Price),
                 "date" => query.OrderByDescending(t => t.ListedDate),
-                _ => query.OrderBy(t => t.Title)
+                "author" => query.OrderBy(t => t.Author),
+                _ => query.OrderBy(t => t.Title) // default
             };
 
-            return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            // Pagination
+            return await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         public async Task<Textbook?> GetByIdAsync(int id) =>
-            await _context.Textbooks.Include(t => t.User)
+            await _context.Textbooks
+                .Include(t => t.User)
                 .Include(t => t.Offers).ThenInclude(o => o.User)
                 .FirstOrDefaultAsync(t => t.Id == id);
 

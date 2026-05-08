@@ -1,0 +1,39 @@
+﻿@model IEnumerable<SomaShare.Models.WantedAd>
+@{
+    ViewData["Title"] = "Wanted Ads";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-danger">Wanted Ads</h1>
+        <a asp-controller="WantedAd" asp-action="Create" class="btn btn-primary">Post Wanted Ad</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning">No wanted ads posted yet.</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var ad in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">@ad.Title</h5>
+                            <p class="card-text">@ad.Description</p>
+                            <small class="text-muted">
+                                Posted by @ad.User.FullName on @ad.PostedDate.ToShortDateString()
+                            </small>
+                            <div class="mt-2">
+                                <a asp-controller="WantedAd" asp-action="Details" asp-route-id="@ad.Id"
+                                   class="btn btn-outline-secondary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -29,7 +29,8 @@
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <li class="nav-item">
-            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="LoggedInHome">Dashboard</a>
+               <a asp-controller="WantedAd" asp-action="Index" class="btn btn-outline-primary">Browse Wanted Ads</a>
+
         </li>
         <li class="nav-item">
             <a class="nav-link" asp-area="" asp-controller="Account" asp-action="EditProfile">Edit Profile</a>
