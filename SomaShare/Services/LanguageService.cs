@@ -2,8 +2,18 @@
 {
     public class LanguageService
     {
-        public string CurrentLanguage { get; set; } = "en";
-        public void SetLanguage(string lang) => CurrentLanguage = lang;
-        public string T(string english, string zulu) => CurrentLanguage == "zu" ? zulu : english;
+        private string _currentLanguage = "en"; // default English
+
+        public string CurrentLanguage => _currentLanguage;
+
+        public void ToggleLanguage()
+        {
+            _currentLanguage = _currentLanguage == "en" ? "zu" : "en";
+        }
+
+        public string T(string english, string zulu)
+        {
+            return _currentLanguage == "en" ? english : zulu;
+        }
     }
 }

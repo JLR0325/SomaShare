@@ -35,7 +35,7 @@ namespace SomaShare.Controllers
             var reviewerId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if (reviewerId == reviewedUserId) return BadRequest("Cannot review yourself.");
             await _reviewService.CreateReviewAsync(rating, comment, reviewerId, reviewedUserId);
-            return RedirectToAction("MyReviews");
+            return RedirectToAction("View", "Profile", new { id = reviewedUserId });
         }
 
         public async Task<IActionResult> MyReviews()
