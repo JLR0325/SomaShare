@@ -1,0 +1,21 @@
+﻿@using SomaShare.Services
+@model List<ForumThread>
+@inject LanguageService Lang
+@{
+    ViewData["Title"] = Lang.T("Chat Forum", "Inkundla");
+}
+<h2>@Lang.T("Community Chat Forum", "Inkundla Yezingxoxo")</h2>
+<a href="/Forum/CreateThread" class="btn btn-success mb-3">@Lang.T("Start New Discussion", "Qala Ingxoxo Entsha")</a>
+<table class="table">
+    <thead><tr><th>@Lang.T("Topic", "Isihloko")</th><th>@Lang.T("Started by", "Iqalwe ngu")</th><th>@Lang.T("Date", "Usuku")</th></tr></thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td><a href="/Forum/Details/@t.Id">@t.Title</a></td>
+                <td>@t.User?.FullName</td>
+                <td>@t.CreatedDate.ToString("dd MMM yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

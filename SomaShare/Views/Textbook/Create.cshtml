@@ -1,0 +1,71 @@
+﻿@model SomaShare.Models.Textbook
+
+@{
+    ViewData["Title"] = "Create Listing";
+}
+
+<h2>Create a Textbook Listing</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Author" class="form-label"></label>
+        <input asp-for="Author" class="form-control" />
+        <span asp-validation-for="Author" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ISBN" class="form-label"></label>
+        <input asp-for="ISBN" class="form-control" />
+        <span asp-validation-for="ISBN" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Edition" class="form-label"></label>
+        <input asp-for="Edition" class="form-control" />
+        <span asp-validation-for="Edition" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Condition" class="form-label"></label>
+        <select asp-for="Condition" class="form-select">
+            <option value="">Select condition</option>
+            <option>New</option>
+            <option>Like New</option>
+            <option>Good</option>
+            <option>Fair</option>
+        </select>
+        <span asp-validation-for="Condition" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Campus" class="form-label"></label>
+        <input asp-for="Campus" class="form-control" />
+        <span asp-validation-for="Campus" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ImageUrl" class="form-label"></label>
+        <input asp-for="ImageUrl" class="form-control" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+   
+    <button type="submit" class="btn btn-danger">Create Listing</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

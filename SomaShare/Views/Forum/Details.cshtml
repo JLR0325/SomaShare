@@ -1,0 +1,24 @@
+﻿@using SomaShare.Services
+@model ForumThread
+@inject LanguageService Lang
+@{
+    ViewData["Title"] = Model.Title;
+}
+<h2>@Model.Title</h2>
+<p>@Model.Content</p>
+<small>@Lang.T("Posted by", "Ithunyelwe ngu") @Model.User?.FullName @Model.CreatedDate.ToString("f")</small>
+<hr />
+<h4>@Lang.T("Replies", "Izimpendulo")</h4>
+@foreach (var post in Model.Posts.OrderBy(p => p.PostedDate))
+{
+    <div class="border p-2 mb-2">
+        <strong>@post.User?.FullName</strong> - @post.PostedDate.ToString("g")
+        <p>@post.Content</p>
+    </div>
+}
+<form method="post" action="/Forum/AddPost">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="threadId" value="@Model.Id" />
+    <textarea name="content" class="form-control" rows="3" placeholder="@Lang.T("Write a reply...", "Bhala impendulo...")"></textarea>
+    <button class="btn btn-primary mt-2">@Lang.T("Post Reply", "Thumela")</button>
+</form>

@@ -1,0 +1,49 @@
+﻿@model SomaShare.ViewModels.EditProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<h2>Edit Profile</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="EditProfile" method="post">
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Campus" class="form-label"></label>
+        <input asp-for="Campus" class="form-control" />
+        <span asp-validation-for="Campus" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ProfileImageUrl" class="form-label"></label>
+        <input asp-for="ProfileImageUrl" class="form-control" />
+        <span asp-validation-for="ProfileImageUrl" class="text-danger"></span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+    {
+        <div class="mb-3">
+            <img src="@Model.ProfileImageUrl" alt="Profile Image" class="img-thumbnail" style="max-width: 200px;" />
+        </div>
+    }
+
+    <button type="submit" class="btn btn-danger">Save Changes</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

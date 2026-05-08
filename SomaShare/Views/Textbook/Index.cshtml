@@ -1,0 +1,39 @@
+﻿@model IEnumerable<SomaShare.Models.Textbook>
+@{
+    ViewData["Title"] = "Textbook Listings";
+}
+
+<h2>Available Textbooks</h2>
+
+<form asp-controller="Textbook" asp-action="Index" method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="searchString" value="@Context.Request.Query["searchString"]"
+               class="form-control" placeholder="Search by title, author, or ISBN..." />
+        <button type="submit" class="btn btn-danger">Search</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning">No listings found.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var book in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-danger">@book.Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@book.Author</h6>
+                        <p>ISBN: @book.ISBN</p>
+                        <p><strong>R @book.Price</strong> • @book.Condition • @book.Campus</p>
+                        <a asp-controller="Textbook" asp-action="Details" asp-route-id="@book.Id"
+                           class="btn btn-outline-secondary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
