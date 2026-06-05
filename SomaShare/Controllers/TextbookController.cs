@@ -16,8 +16,12 @@ namespace SomaShare.Controllers
         public async Task<IActionResult> Index(string searchString, string condition, string campus,
             decimal? minPrice, decimal? maxPrice, string sortOrder, int page = 1)
         {
+            int pageSize = 9; // default page size
             var books = await _textbookService.GetAllAsync(searchString, condition, campus,
-                minPrice, maxPrice, sortOrder, page);
+                minPrice, maxPrice, sortOrder, page, pageSize);
+            var total = await _textbookService.GetCountAsync(searchString, condition, campus, minPrice, maxPrice);
+            ViewBag.TotalPages = (int)Math.Ceiling(total / (double)pageSize);
+            ViewBag.PageSize = pageSize;
             ViewBag.SearchString = searchString;
             ViewBag.Condition = condition;
             ViewBag.Campus = campus;

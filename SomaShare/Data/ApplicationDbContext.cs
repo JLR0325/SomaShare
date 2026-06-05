@@ -15,6 +15,7 @@ namespace SomaShare.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<ForumThread> ForumThreads { get; set; }
         public DbSet<ForumPost> ForumPosts { get; set; }
+        public DbSet<Models.ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

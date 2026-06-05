@@ -8,7 +8,6 @@ namespace SomaShare.Services
     {
         private readonly ApplicationDbContext _context;
         public TextbookService(ApplicationDbContext context) => _context = context;
-
         public async Task<List<Textbook>> GetAllAsync(
             string? searchString,
             string? condition,
@@ -61,6 +60,47 @@ namespace SomaShare.Services
             return await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetCountAsync(
+            string? searchString,
+            string? condition,
+            string? campus,
+            decimal? minPrice,
+            decimal? maxPrice)
+        {
+            var query = _context.Textbooks.Where(t => !t.IsSold);
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                string s = searchString.ToLower();
+                query = query.Where(t =>
+                    t.Title.ToLower().Contains(s) ||
+                    t.Author.ToLower().Contains(s) ||
+                    t.ISBN.ToLower().Contains(s));
+            }
+
+            if (!string.IsNullOrEmpty(condition))
+                query = query.Where(t => t.Condition == condition);
+
+            if (!string.IsNullOrEmpty(campus))
+                query = query.Where(t => t.Campus.ToLower().Contains(campus.ToLower()));
+
+            if (minPrice.HasValue)
+                query = query.Where(t => t.Price >= minPrice.Value);
+            if (maxPrice.HasValue)
+                query = query.Where(t => t.Price <= maxPrice.Value);
+
+            return await query.CountAsync();
+        }
+
+        public async Task<List<Textbook>> GetByUserAsync(string userId)
+        {
+            return await _context.Textbooks
+                .Include(t => t.User)
+                .Where(t => t.UserId == userId)
+                .OrderByDescending(t => t.ListedDate)
                 .ToListAsync();
         }
 

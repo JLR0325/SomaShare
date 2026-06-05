@@ -22,11 +22,21 @@ namespace SomaShare.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var allBooks = await _textbookService.GetAllAsync(null, null, null, null, null, null);
-            ViewBag.MyListings = allBooks.Where(b => b.UserId == userId).ToList();
-            ViewBag.MyOffers = await _offerService.GetOffersByBuyerAsync(userId!);
-            ViewBag.MyTransactions = await _transactionService.GetUserTransactionsAsync(userId!);
-            return View();
+            // Read optional pageSize from query string if provided (e.g. ?pageSize=20)
+            var pageSize = HttpContext.Request.Query.ContainsKey("pageSize")
+                ? (int?)System.Convert.ToInt32(HttpContext.Request.Query["pageSize"].ToString())
+                : null;
+            var myListings = await _textbookService.GetByUserAsync(userId!);
+            var myOffers = await _offerService.GetOffersByBuyerAsync(userId!);
+            var myTransactions = await _transactionService.GetUserTransactionsAsync(userId!);
+            var model = new
+            {
+                MyListings = myListings,
+                MyOffers = myOffers,
+                MyTransactions = myTransactions,
+                PageSize = pageSize
+            };
+            return View(model);
         }
     }
 }

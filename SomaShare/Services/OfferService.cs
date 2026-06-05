@@ -71,5 +71,14 @@ namespace SomaShare.Services
             await _context.Offers.Include(o => o.Textbook).Include(o => o.User)
                 .Where(o => o.Textbook.UserId == sellerId)
                 .ToListAsync();
+
+        public async Task<bool> DeleteOfferAsync(int offerId, string userId)
+        {
+            var offer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
+            if (offer == null || offer.UserId != userId) return false;
+            if (offer.Status == "Accepted") return false; // cannot delete accepted offers
+            _context.Offers.Remove(offer);
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

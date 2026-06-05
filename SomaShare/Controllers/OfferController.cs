@@ -69,5 +69,13 @@ namespace SomaShare.Controllers
             await _offerService.RejectOfferAsync(offerId, sellerId);
             return RedirectToAction("SellerOffers");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int offerId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            await _offerService.DeleteOfferAsync(offerId, userId);
+            return RedirectToAction("MyOffers");
+        }
     }
 }

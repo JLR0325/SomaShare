@@ -35,6 +35,7 @@ builder.Services.AddScoped<OfferService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<ForumService>();
+builder.Services.AddScoped<ChatService>();
 
 // App language service (singleton, simple toggle)
 builder.Services.AddSingleton<LanguageService>();

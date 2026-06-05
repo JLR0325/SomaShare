@@ -33,11 +33,32 @@
 
         </li>
         <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Offer" asp-action="MyOffers">My Offers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Offer" asp-action="SellerOffers">Seller Offers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Transaction" asp-action="MyTransactions">My Transactions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Review" asp-action="MyReviews">My Reviews</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Conversation" asp-route-withUserId="">Chat</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" asp-area="" asp-controller="Account" asp-action="EditProfile">Edit Profile</a>
         </li>
         <li class="nav-item">
             <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                 <button type="submit" class="btn btn-link nav-link">Logout</button>
+            </form>
+        </li>
+        <li class="nav-item ms-2">
+            <form asp-controller="Language" asp-action="Toggle" method="post" class="d-inline">
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <button type="submit" class="btn btn-sm btn-light">Toggle Lang</button>
             </form>
         </li>
     }

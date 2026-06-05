@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "My Dashboard";
+}
+
+<h2>Welcome to your dashboard</h2>
+
+<h3>My Listings</h3>
+@if (!Model.MyListings.Any())
+{
+    <div class="alert alert-info">You have no active listings.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var book in Model.MyListings)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@book.Title</h5>
+                        <p class="card-text">@book.Author • R @book.Price</p>
+                        <a asp-controller="Textbook" asp-action="Details" asp-route-id="@book.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<h3 class="mt-4">My Offers</h3>
+@if (!Model.MyOffers.Any())
+{
+    <div class="alert alert-info">You have not made any offers.</div>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var o in Model.MyOffers)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @o.Textbook.Title - R @o.Amount
+                <span class="badge bg-secondary">@o.Status</span>
+            </li>
+        }
+    </ul>
+}
+
+<h3 class="mt-4">My Transactions</h3>
+@if (!Model.MyTransactions.Any())
+{
+    <div class="alert alert-info">No transactions yet.</div>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var t in Model.MyTransactions)
+        {
+            <li class="list-group-item">
+                @t.Offer.Textbook.Title — R @t.FinalPrice — @t.TransactionDate.ToShortDateString()
+                @if (!t.Completed)
+                {
+                    <form asp-controller="Transaction" asp-action="MarkCompleted" method="post" class="d-inline float-end">
+                        <input type="hidden" name="id" value="@t.Id" />
+                        <button class="btn btn-sm btn-success">Mark Completed</button>
+                    </form>
+                }
+            </li>
+        }
+    </ul>
+}
