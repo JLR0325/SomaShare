@@ -25,7 +25,7 @@ namespace SomaShare.Models
 
         // FK to seller (User)
         public string UserId { get; set; } = string.Empty;
-        public ApplicationUser User { get; set; } = null!;
+        public ApplicationUser? User { get; set; }
 
         public ICollection<Offer> Offers { get; set; } = new List<Offer>();
     }

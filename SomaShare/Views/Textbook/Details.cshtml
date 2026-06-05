@@ -1,6 +1,9 @@
 @model SomaShare.Models.Textbook
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Textbook Details";
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isOwner = currentUserId == Model.UserId;
 }
 
 <div class="container mt-4">
@@ -53,9 +56,16 @@
                     }
                     else
                     {
-                        <button class="btn btn-success w-100 mb-2">Make an Offer</button>
+                        <button class="btn btn-danger w-100 mb-2">Make an Offer</button>
                     }
-                    <a asp-controller="Textbook" asp-action="Index" class="btn btn-outline-secondary w-100">Back to Listings</a>
+
+                    @if (isOwner)
+                    {
+                        <a asp-controller="Textbook" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100 mb-2">Edit Listing</a>
+                        <a asp-controller="Textbook" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger w-100 mb-2">Delete Listing</a>
+                    }
+
+                    <a asp-controller="Textbook" asp-action="Index" class="btn btn-outline-danger w-100">Back to Listings</a>
                 </div>
             </div>
         </div>

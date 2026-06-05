@@ -32,7 +32,7 @@
 
             @if (User.Identity?.IsAuthenticated == true && User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier) != Model.User.Id)
             {
-                <a asp-controller="Review" asp-action="Create" asp-route-reviewedUserId="@Model.User.Id" class="btn btn-primary">
+                <a asp-controller="Review" asp-action="Create" asp-route-reviewedUserId="@Model.User.Id" class="btn btn-danger">
                     Leave a Review
                 </a>
             }
@@ -98,7 +98,7 @@
                                     }
                                     else
                                     {
-                                        <a asp-controller="Textbook" asp-action="Details" asp-route-id="@textbook.Id" class="btn btn-sm btn-outline-primary">View Details</a>
+                                        <a asp-controller="Textbook" asp-action="Details" asp-route-id="@textbook.Id" class="btn btn-sm btn-danger">View Details</a>
                                     }
                                 </div>
                             </div>
@@ -127,7 +127,7 @@
                                     <p class="card-text">@ad.Description</p>
                                     <p class="card-text text-danger"><strong>Offering: $@ad.OfferAmount.ToString("F2")</strong></p>
                                     <small class="text-muted">Posted @ad.PostedDate.ToString("dd MMM yyyy")</small><br />
-                                    <a asp-controller="WantedAd" asp-action="Details" asp-route-id="@ad.Id" class="btn btn-sm btn-outline-primary">View Details</a>
+                                    <a asp-controller="WantedAd" asp-action="Details" asp-route-id="@ad.Id" class="btn btn-sm btn-danger">View Details</a>
                                 </div>
                             </div>
                         </div>
@@ -142,5 +142,5 @@
     </div>
 
     <hr class="my-4" />
-    <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+    <a href="javascript:history.back()" class="btn btn-outline-danger">Back</a>
 </div>

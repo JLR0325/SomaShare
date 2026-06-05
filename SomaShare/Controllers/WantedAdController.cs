@@ -54,14 +54,27 @@ namespace SomaShare.Controllers
         {
             var ad = await _service.GetByIdAsync(id);
             if (ad == null) return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (ad.UserId != userId) return Forbid();
+
             return View(ad);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(WantedAd ad)
+        public async Task<IActionResult> Edit([Bind("Id,Title,Description,OfferAmount")] WantedAd ad)
         {
             if (!ModelState.IsValid) return View(ad);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var existing = await _service.GetByIdAsync(ad.Id);
+            if (existing == null || existing.UserId != userId) return Forbid();
+
+            // Preserve original UserId and PostedDate
+            ad.UserId = existing.UserId;
+            ad.PostedDate = existing.PostedDate;
+
             await _service.UpdateAsync(ad);
             return RedirectToAction(nameof(Details), new { id = ad.Id });
         }

@@ -1,6 +1,9 @@
 ﻿@model SomaShare.Models.WantedAd
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Wanted Ad Details";
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isOwner = currentUserId == Model.UserId;
 }
 
 <div class="container mt-4">
@@ -9,8 +12,16 @@
 
     <p>
         <strong>Posted by:</strong> @Model.User.FullName <br />
-        <strong>Date:</strong> @Model.PostedDate.ToString("dd MMM yyyy")
+        <strong>Date:</strong> @Model.PostedDate.ToString("dd MMM yyyy") <br />
+        <strong>Offer Amount:</strong> $@Model.OfferAmount.ToString("F2")
     </p>
 
-    <a asp-controller="WantedAd" asp-action="Index" class="btn btn-secondary">Back to Ads</a>
+    <div class="mb-3">
+        @if (isOwner)
+        {
+            <a asp-controller="WantedAd" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">Edit Ad</a>
+            <a asp-controller="WantedAd" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger me-2">Delete Ad</a>
+        }
+        <a asp-controller="WantedAd" asp-action="Index" class="btn btn-outline-danger">Back to Ads</a>
+    </div>
 </div>

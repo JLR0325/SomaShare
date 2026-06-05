@@ -66,14 +66,20 @@ namespace SomaShare.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Textbook textbook)
+        public async Task<IActionResult> Edit([Bind("Id,Title,Author,ISBN,Edition,Condition,Price,Campus,ImageUrl")] Textbook textbook)
         {
             if (!ModelState.IsValid) return View(textbook);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var existing = await _textbookService.GetByIdAsync(textbook.Id);
             if (existing == null || existing.UserId != userId) return Forbid();
+
+            // Preserve original UserId and ListedDate
+            textbook.UserId = existing.UserId;
+            textbook.ListedDate = existing.ListedDate;
+            textbook.IsSold = existing.IsSold;
+
             await _textbookService.UpdateAsync(textbook);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { id = textbook.Id });
         }
 
         public async Task<IActionResult> Delete(int id)
