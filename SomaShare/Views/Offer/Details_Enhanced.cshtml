@@ -1,0 +1,203 @@
+@model Offer
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = $"Offer on {Model.Textbook.Title}";
+    var currentUserId = UserManager.GetUserId(User);
+    var isSellerPage = currentUserId == Model.Textbook.UserId;
+    var isBuyerPage = currentUserId == Model.UserId;
+}
+
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Offer")">Offers</a></li>
+            <li class="breadcrumb-item active">Offer Details</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Textbook Information -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Textbook Details</h5>
+                </div>
+                <div class="card-body">
+                    <h4>@Model.Textbook.Title</h4>
+                    <p class="text-muted"><strong>Author:</strong> @Model.Textbook.Author</p>
+                    <p class="text-muted"><strong>ISBN:</strong> @Model.Textbook.ISBN</p>
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h6 class="text-muted">Listed Price</h6>
+                                        <h4 class="text-danger"><s>R @Model.Textbook.Price.ToString("F2")</s></h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card text-center bg-success text-white">
+                                    <div class="card-body">
+                                        <h6>Offer Price</h6>
+                                        <h4>R @Model.Amount.ToString("F2")</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>Discount:</strong> 
+                        @{
+                            decimal discount = ((Model.Textbook.Price - Model.Amount) / Model.Textbook.Price) * 100;
+                            <text>@discount.ToString("F1")% off</text>
+                        }
+                    </div>
+
+                    <a href="@Url.Action("Details", "Textbook", new { id = Model.TextbookId })" class="btn btn-info w-100">
+                        <i class="fas fa-book"></i> View Full Listing
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Offer Details -->
+        <div class="col-md-6">
+            <!-- Offer Status Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Offer Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        @switch (Model.Status)
+                        {
+                            case "Pending":
+                                <div class="badge bg-warning text-dark" style="font-size: 16px; padding: 10px 15px;">
+                                    <i class="fas fa-hourglass-half"></i> Pending Review
+                                </div>
+                                break;
+                            case "Accepted":
+                                <div class="badge bg-success" style="font-size: 16px; padding: 10px 15px;">
+                                    <i class="fas fa-check-circle"></i> Accepted
+                                </div>
+                                break;
+                            case "Declined":
+                                <div class="badge bg-danger" style="font-size: 16px; padding: 10px 15px;">
+                                    <i class="fas fa-times-circle"></i> Declined
+                                </div>
+                                break;
+                        }
+                    </div>
+
+                    <p><strong>Offered on:</strong> @Model.OfferDate.ToString("MMMM dd, yyyy HH:mm")</p>
+
+                    @if (isSellerPage && Model.Status == "Pending")
+                    {
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("AcceptOffer", new { id = Model.Id })" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Accept Offer
+                            </a>
+                            <a href="@Url.Action("DeclineOffer", new { id = Model.Id })" class="btn btn-danger btn-lg">
+                                <i class="fas fa-times"></i> Decline Offer
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Offeror Information -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Offeror Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        @if (!string.IsNullOrEmpty(Model.User.ProfileImageUrl))
+                        {
+                            <img src="@Model.User.ProfileImageUrl" alt="@Model.User.FullName" 
+                                 class="rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary rounded-circle me-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user text-white" style="font-size: 40px;"></i>
+                            </div>
+                        }
+                        <div>
+                            <h5>@Model.User.FullName</h5>
+                            <p class="mb-0">
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-star"></i> @Model.User.Rating.ToString("F1")
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <p><strong>Institution:</strong> @Model.User.Institution</p>
+                    <p><strong>Course:</strong> @Model.User.Course</p>
+
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("View", "Profile", new { userId = Model.UserId })" class="btn btn-info">
+                            <i class="fas fa-user-circle"></i> View Profile
+                        </a>
+                        @if (!isBuyerPage)
+                        {
+                            <a href="@Url.Action("StartConversation", "Chat", new { userId = Model.UserId })" class="btn btn-primary">
+                                <i class="fas fa-envelope"></i> Send Message
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seller Information (if viewing as buyer) -->
+    @if (isBuyerPage)
+    {
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Seller Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2 text-center">
+                                @if (!string.IsNullOrEmpty(Model.Textbook.User.ProfileImageUrl))
+                                {
+                                    <img src="@Model.Textbook.User.ProfileImageUrl" alt="@Model.Textbook.User.FullName" 
+                                         class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <div class="bg-secondary rounded-circle mx-auto" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user text-white" style="font-size: 40px;"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-10">
+                                <h5>@Model.Textbook.User.FullName</h5>
+                                <p>
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-star"></i> @Model.Textbook.User.Rating.ToString("F1")
+                                    </span>
+                                </p>
+                                <p><strong>Institution:</strong> @Model.Textbook.User.Institution</p>
+                                <p><strong>Course:</strong> @Model.Textbook.User.Course</p>
+                                <a href="@Url.Action("StartConversation", "Chat", new { userId = Model.Textbook.UserId })" class="btn btn-primary">
+                                    <i class="fas fa-envelope"></i> Contact Seller
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

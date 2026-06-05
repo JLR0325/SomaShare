@@ -18,6 +18,22 @@ namespace SomaShare.Models
         public string UserId { get; set; } = string.Empty; // Buyer who made offer
         public ApplicationUser User { get; set; } = null!;
 
+        // Compatibility properties - keep minimal changes to resolve CS1061 usage across views/controllers
+        public string BuyerId
+        {
+            get => UserId;
+            set => UserId = value;
+        }
+
+        public DateTime CreatedAt
+        {
+            get => OfferDate;
+            set => OfferDate = value;
+        }
+
+        // Seller/UserId of the textbook being offered on. This is kept as a separate stored field for compatibility with existing queries.
+        public string TextbookUserId { get; set; } = string.Empty;
+
         public Transaction? Transaction { get; set; }
     }
 }

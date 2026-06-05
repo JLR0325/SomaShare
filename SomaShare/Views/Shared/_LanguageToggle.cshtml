@@ -1,0 +1,28 @@
+@{
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+}
+
+<div class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
+        <i class="fas fa-globe"></i> @currentCulture
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <a class="dropdown-item" href="@Url.Action("SetLanguage", "Language", new { culture = "en-US", returnUrl = Context.Request.Path + Context.Request.QueryString })">
+                🇺🇸 English
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="@Url.Action("SetLanguage", "Language", new { culture = "es-ES", returnUrl = Context.Request.Path + Context.Request.QueryString })">
+                🇪🇸 Español
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="@Url.Action("SetLanguage", "Language", new { culture = "fr-FR", returnUrl = Context.Request.Path + Context.Request.QueryString })">
+                🇫🇷 Français
+            </a>
+        </li>
+    </ul>
+</div>
+
+@using System.Globalization

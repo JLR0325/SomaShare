@@ -1,0 +1,141 @@
+@model IEnumerable<WantedAd>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Wanted Ads";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>📣 Wanted Ads</h1>
+            <p class="text-muted">Looking for textbooks? Browse wanted ads or post your own.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="@Url.Action("Create")" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus"></i> Post Wanted Ad
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "Account")" class="btn btn-primary btn-lg">
+                    Login to Post
+                </a>
+            }
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var item in Model.OrderByDescending(w => w.PostedDate))
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <!-- Ad Title -->
+                            <h5 class="card-title">
+                                <a href="@Url.Action("Details", new { id = item.Id })" class="text-decoration-none">
+                                    @item.Title
+                                </a>
+                            </h5>
+
+                            <!-- Description -->
+                            <p class="card-text text-muted">
+                                @if (item.Description.Length > 100)
+                                {
+                                    @item.Description.Substring(0, 100)<span>...</span>
+                                }
+                                else
+                                {
+                                    @item.Description
+                                }
+                            </p>
+
+                            <!-- Offer Amount -->
+                            @if (item.OfferAmount > 0)
+                            {
+                                <h6 class="text-success mb-3">
+                                    <strong>Offering: R @item.OfferAmount.ToString("F2")</strong>
+                                </h6>
+                            }
+
+                            <!-- Requester Info -->
+                            <div class="border-top pt-3 mt-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    @if (!string.IsNullOrEmpty(item.User.ProfileImageUrl))
+                                    {
+                                        <img src="@item.User.ProfileImageUrl" alt="@item.User.FullName" 
+                                             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary rounded-circle me-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-user text-white" style="font-size: 18px;"></i>
+                                        </div>
+                                    }
+                                    <div>
+                                        <a href="@Url.Action("View", "Profile", new { userId = item.UserId })" class="text-decoration-none fw-bold">
+                                            @item.User.FullName
+                                        </a>
+                                        <br />
+                                        <small class="text-muted">
+                                            <i class="fas fa-star" style="color: #ffc107;"></i> @item.User.Rating.ToString("F1")
+                                        </small>
+                                    </div>
+                                </div>
+                                <small class="text-muted d-block">@item.User.Institution</small>
+                                <small class="text-muted d-block">Posted @item.PostedDate.ToString("MMM dd, yyyy")</small>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="card-footer bg-transparent">
+                            <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-primary w-100 mb-2">
+                                View Details
+                            </a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a href="@Url.Action("StartConversation", "Chat", new { userId = item.UserId })" class="btn btn-sm btn-outline-primary w-100">
+                                    Contact Requester
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Login", "Account")" class="btn btn-sm btn-outline-primary w-100">
+                                    Login to Contact
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <h5>No wanted ads yet</h5>
+            <p>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <text>Be the first to <a href="@Url.Action("Create")">post a wanted ad</a></text>
+                }
+                else
+                {
+                    <text><a href="@Url.Action("Login", "Account")">Login</a> to post a wanted ad</text>
+                }
+            </p>
+        </div>
+    }
+</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+        transform: translateY(-4px);
+    }
+</style>

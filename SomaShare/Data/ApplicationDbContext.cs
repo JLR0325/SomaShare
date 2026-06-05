@@ -75,6 +75,12 @@ namespace SomaShare.Data
 
             // Forum
             builder.Entity<ForumThread>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.ForumThreads)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ForumThread>()
                 .HasMany(t => t.Posts)
                 .WithOne(p => p.Thread)
                 .HasForeignKey(p => p.ThreadId)
@@ -84,6 +90,19 @@ namespace SomaShare.Data
                 .HasOne(p => p.User)
                 .WithMany(u => u.ForumPosts)
                 .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ChatMessage relationships
+            builder.Entity<Models.ChatMessage>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(c => c.FromUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Models.ChatMessage>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(c => c.ToUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes for faster searching

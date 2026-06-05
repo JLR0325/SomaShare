@@ -1,0 +1,146 @@
+@model IEnumerable<Textbook>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Browse Textbooks";
+    var searchTerm = ViewBag.SearchTerm ?? "";
+    var campus = ViewBag.Campus ?? "";
+    var sortBy = ViewBag.SortBy ?? "recent";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">📚 Textbook Marketplace</h1>
+
+    <!-- Search and Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Search by title, author, or ISBN" value="@searchTerm" />
+                </div>
+                <div class="col-md-2">
+                    <select name="campus" class="form-select">
+                        <option value="">All Campuses</option>
+                        <option value="APK" selected="@(campus == "APK")">APK</option>
+                        <option value="Bunting" selected="@(campus == "Bunting")">Bunting</option>
+                        <option value="Soweto" selected="@(campus == "Soweto")">Soweto</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="sortBy" class="form-select">
+                        <option value="recent" selected="@(sortBy == "recent")">Most Recent</option>
+                        <option value="price_asc" selected="@(sortBy == "price_asc")">Price: Low to High</option>
+                        <option value="price_desc" selected="@(sortBy == "price_desc")">Price: High to Low</option>
+                        <option value="rating" selected="@(sortBy == "rating")">Best Rated</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+                <div class="col-md-2">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary w-100">Clear</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm hover-shadow" style="transition: all 0.3s ease;">
+                        <!-- Book Image -->
+                        <div style="height: 200px; overflow: hidden; background-color: #f0f0f0;">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" class="card-img-top" style="height: 100%; object-fit: cover;" alt="@item.Title" />
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center justify-content-center" style="height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <i class="fas fa-book text-white" style="font-size: 60px;"></i>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Book Title -->
+                            <h5 class="card-title">
+                                <a href="@Url.Action("Details", new { id = item.Id })" class="text-decoration-none">
+                                    @item.Title
+                                </a>
+                            </h5>
+
+                            <!-- Book Details -->
+                            <p class="card-text">
+                                <strong>Author:</strong> @item.Author<br />
+                                <small class="text-muted">ISBN: @item.ISBN</small><br />
+                                <small><span class="badge bg-info">@item.Condition</span></small>
+                            </p>
+
+                            <!-- Price -->
+                            <h6 class="text-success mb-3">
+                                <strong>R @item.Price.ToString("F2")</strong>
+                            </h6>
+
+                            <!-- Seller Info Card -->
+                            <div class="border-top pt-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    @if (!string.IsNullOrEmpty(item.User.ProfileImageUrl))
+                                    {
+                                        <img src="@item.User.ProfileImageUrl" alt="@item.User.FullName" 
+                                             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary rounded-circle me-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-user text-white" style="font-size: 18px;"></i>
+                                        </div>
+                                    }
+                                    <div>
+                                        <a href="@Url.Action("View", "Profile", new { userId = item.UserId })" class="text-decoration-none fw-bold">
+                                            @item.User.FullName
+                                        </a>
+                                        <br />
+                                        <small class="text-muted">
+                                            <i class="fas fa-star" style="color: #ffc107;"></i> @item.User.Rating.ToString("F1")
+                                        </small>
+                                    </div>
+                                </div>
+                                <small class="text-muted d-block">@item.User.Institution</small>
+                                <small class="text-muted d-block">@item.Campus Campus</small>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="card-footer bg-transparent">
+                            <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-primary w-100 mb-2">
+                                View Details
+                            </a>
+                            <a href="@Url.Action("StartConversation", "Chat", new { userId = item.UserId })" class="btn btn-sm btn-outline-primary w-100">
+                                Contact Seller
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <h5>No textbooks found</h5>
+            <p>Try adjusting your search filters or <a href="@Url.Action("Create")">list a textbook</a></p>
+        </div>
+    }
+</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+        transform: translateY(-4px);
+    }
+</style>

@@ -1,0 +1,76 @@
+@model IEnumerable<ChatMessage>
+
+@{
+    ViewData["Title"] = "My Messages";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h1>My Messages</h1>
+                    <p class="text-muted">Your conversations with other users</p>
+                </div>
+                <a href="@Url.Action("Browse", "Profile")" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Start New Chat
+                </a>
+            </div>
+            <hr />
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="list-group">
+                    @{
+                        var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                        var uniqueConversations = new Dictionary<string, (ChatMessage Message, ApplicationUser? OtherUser)>();
+
+                        foreach (var message in Model.OrderByDescending(m => m.SentAt))
+                        {
+                            var otherUserId = message.FromUserId == currentUserId ? message.ToUserId : message.FromUserId;
+                            var otherUser = message.FromUserId == currentUserId ? message.ToUser : message.FromUser;
+
+                            if (!uniqueConversations.ContainsKey(otherUserId))
+                            {
+                                uniqueConversations[otherUserId] = (message, otherUser);
+                            }
+                        }
+
+                        foreach (var conv in uniqueConversations)
+                        {
+                            var (message, otherUser) = conv.Value;
+                            var otherUserName = otherUser?.FullName ?? $"User ({conv.Key.Substring(0, Math.Min(8, conv.Key.Length))})";
+
+                            <a href="@Url.Action("Conversation", "Chat", new { userId = conv.Key })" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold">
+                                            @if (!string.IsNullOrEmpty(otherUser?.ProfileImageUrl))
+                                            {
+                                                <img src="@otherUser.ProfileImageUrl" alt="@otherUserName" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;" />
+                                            }
+                                            @otherUserName
+                                        </div>
+                                        <small class="text-muted">@message.Message.Substring(0, Math.Min(60, message.Message.Length))@(message.Message.Length > 60 ? "..." : "")</small>
+                                    </div>
+                                    <small class="text-muted">@message.SentAt.ToString("g")</small>
+                                </div>
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> No conversations yet. 
+            <a href="@Url.Action("Browse", "Profile")">Start chatting with other users!</a>
+        </div>
+    }
+</div>

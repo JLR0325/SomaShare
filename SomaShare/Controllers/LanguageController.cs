@@ -1,21 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SomaShare.Services;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SomaShare.Controllers
 {
     public class LanguageController : Controller
     {
-        private readonly LanguageService _languageService;
-        public LanguageController(LanguageService languageService) => _languageService = languageService;
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Toggle(string returnUrl)
+        // GET: Language/SetLanguage
+        [HttpGet]
+        public IActionResult SetLanguage(string culture, string returnUrl)
         {
-            _languageService.ToggleLanguage();
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                return LocalRedirect(returnUrl);
-            return RedirectToAction("Public", "Home");
+            if (!string.IsNullOrEmpty(culture))
+            {
+                Response.Cookies.Append(
+                    CookieRequestCultureProvider.DefaultCookieName,
+                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                    new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+                );
+            }
+
+            // Return to the page that called this action, or go to home
+            return LocalRedirect(string.IsNullOrEmpty(returnUrl) ? "/" : returnUrl);
         }
     }
 }

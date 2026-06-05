@@ -13,6 +13,8 @@ namespace SomaShare.Services
         {
             return await _context.Set<ChatMessage>()
                 .Where(m => (m.FromUserId == userAId && m.ToUserId == userBId) || (m.FromUserId == userBId && m.ToUserId == userAId))
+                .Include(m => m.FromUser)
+                .Include(m => m.ToUser)
                 .OrderBy(m => m.SentAt)
                 .ToListAsync();
         }
@@ -21,6 +23,33 @@ namespace SomaShare.Services
         {
             _context.Set<ChatMessage>().Add(message);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<Dictionary<string, ChatMessage>> GetUniqueConversationsAsync(string userId)
+        {
+            var messages = await _context.ChatMessages
+                .Where(m => m.FromUserId == userId || m.ToUserId == userId)
+                .Include(m => m.FromUser)
+                .Include(m => m.ToUser)
+                .OrderByDescending(m => m.SentAt)
+                .ToListAsync();
+
+            var uniqueConversations = new Dictionary<string, ChatMessage>();
+            foreach (var message in messages)
+            {
+                var otherUserId = message.FromUserId == userId ? message.ToUserId : message.FromUserId;
+                if (!uniqueConversations.ContainsKey(otherUserId))
+                {
+                    uniqueConversations[otherUserId] = message;
+                }
+            }
+
+            return uniqueConversations;
+        }
+
+        public async Task<ApplicationUser?> GetUserByIdAsync(string userId)
+        {
+            return await _context.Users.FindAsync(userId);
         }
     }
 }

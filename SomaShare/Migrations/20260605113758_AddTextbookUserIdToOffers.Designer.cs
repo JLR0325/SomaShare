@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SomaShare.Data;
 
@@ -11,9 +12,11 @@ using SomaShare.Data;
 namespace SomaShare.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260605113758_AddTextbookUserIdToOffers")]
+    partial class AddTextbookUserIdToOffers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,9 +262,6 @@ namespace SomaShare.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("FromUserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -273,18 +273,11 @@ namespace SomaShare.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ToUserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FromUserId");
 
-                    b.HasIndex("FromUserId1");
-
                     b.HasIndex("ToUserId");
-
-                    b.HasIndex("ToUserId1");
 
                     b.ToTable("ChatMessages");
                 });
@@ -634,23 +627,11 @@ namespace SomaShare.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SomaShare.Models.ApplicationUser", "FromUser")
-                        .WithMany()
-                        .HasForeignKey("FromUserId1");
-
                     b.HasOne("SomaShare.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("ToUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("SomaShare.Models.ApplicationUser", "ToUser")
-                        .WithMany()
-                        .HasForeignKey("ToUserId1");
-
-                    b.Navigation("FromUser");
-
-                    b.Navigation("ToUser");
                 });
 
             modelBuilder.Entity("SomaShare.Models.ForumPost", b =>

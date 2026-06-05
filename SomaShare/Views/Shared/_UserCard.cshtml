@@ -1,0 +1,36 @@
+@model ApplicationUser
+
+<div class="card h-100">
+    <div class="card-body">
+        <div class="text-center mb-3">
+            @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+            {
+                <img src="@Model.ProfileImageUrl" alt="@Model.FullName" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;" />
+            }
+            else
+            {
+                <div class="bg-secondary rounded-circle mx-auto" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-user text-white"></i>
+                </div>
+            }
+        </div>
+        <h6 class="card-title text-center">
+            <a href="@Url.Action("View", "Profile", new { userId = Model.Id })" class="text-decoration-none">
+                @Model.FullName
+            </a>
+        </h6>
+        <p class="card-text small">
+            <strong>@Model.Institution</strong><br/>
+            <span class="text-muted">@Model.Course</span>
+        </p>
+        <div class="text-center mb-2">
+            <span class="badge bg-warning text-dark">@Model.Rating.ToString("F1") ⭐</span>
+        </div>
+        <a href="@Url.Action("View", "Profile", new { userId = Model.Id })" class="btn btn-sm btn-info w-100 mb-2">
+            View Profile
+        </a>
+        <a href="@Url.Action("StartConversation", "Chat", new { userId = Model.Id })" class="btn btn-sm btn-primary w-100">
+            Message
+        </a>
+    </div>
+</div>

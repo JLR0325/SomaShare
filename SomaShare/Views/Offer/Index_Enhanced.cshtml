@@ -1,0 +1,117 @@
+@model IEnumerable<Offer>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Browse Offers";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">🤝 Active Offers</h1>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm hover-shadow">
+                        <!-- Textbook Info -->
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="@Url.Action("Details", "Textbook", new { id = item.TextbookId })" class="text-decoration-none">
+                                    @item.Textbook.Title
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted">
+                                By @item.Textbook.Author<br />
+                                <small>ISBN: @item.Textbook.ISBN</small>
+                            </p>
+
+                            <!-- Price Comparison -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Listed Price:</span>
+                                    <span class="text-muted"><s>R @item.Textbook.Price.ToString("F2")</s></span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span><strong>Offered Price:</strong></span>
+                                    <span class="text-success"><strong>R @item.Amount.ToString("F2")</strong></span>
+                                </div>
+                            </div>
+
+                            <!-- Status Badge -->
+                            <div class="mb-3">
+                                @switch (item.Status)
+                                {
+                                    case "Pending":
+                                        <span class="badge bg-warning text-dark">⏳ Pending</span>
+                                        break;
+                                    case "Accepted":
+                                        <span class="badge bg-success">✓ Accepted</span>
+                                        break;
+                                    case "Declined":
+                                        <span class="badge bg-danger">✗ Declined</span>
+                                        break;
+                                }
+                            </div>
+
+                            <!-- Offeror Info -->
+                            <div class="border-top pt-3 mt-3">
+                                <p class="mb-2"><strong>Offered by:</strong></p>
+                                <div class="d-flex align-items-center mb-2">
+                                    @if (!string.IsNullOrEmpty(item.User.ProfileImageUrl))
+                                    {
+                                        <img src="@item.User.ProfileImageUrl" alt="@item.User.FullName" 
+                                             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary rounded-circle me-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-user text-white" style="font-size: 18px;"></i>
+                                        </div>
+                                    }
+                                    <div>
+                                        <a href="@Url.Action("View", "Profile", new { userId = item.UserId })" class="text-decoration-none fw-bold">
+                                            @item.User.FullName
+                                        </a>
+                                        <br />
+                                        <small class="text-muted">
+                                            <i class="fas fa-star" style="color: #ffc107;"></i> @item.User.Rating.ToString("F1")
+                                        </small>
+                                    </div>
+                                </div>
+                                <small class="text-muted d-block">@item.User.Institution</small>
+                                <small class="text-muted d-block">Offered @item.OfferDate.ToString("MMM dd, yyyy")</small>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="card-footer bg-transparent">
+                            <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-primary w-100 mb-2">
+                                View Details
+                            </a>
+                            <a href="@Url.Action("StartConversation", "Chat", new { userId = item.UserId })" class="btn btn-sm btn-outline-primary w-100">
+                                Message Offeror
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <h5>No active offers yet</h5>
+            <p>Check back later or <a href="@Url.Action("Index", "Textbook")">browse textbooks</a> to make an offer</p>
+        </div>
+    }
+</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+        transform: translateY(-4px);
+    }
+</style>

@@ -1,0 +1,68 @@
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+            <i class="fas fa-book"></i> SomaShare
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Textbook")">
+                        <i class="fas fa-list"></i> Listings
+                    </a>
+                </li>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Chat")">
+                            <i class="fas fa-envelope"></i> Messages
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Dashboard")">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Browse", "Profile")"><i class="fas fa-users"></i> Browse Users</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Create", "Textbook")">Create Listing</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Create", "WantedAd")">Post Wanted Ad</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="javascript:document.getElementById('logout-form').submit();">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Login", "Account")">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Register", "Account")">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <partial name="_LanguageToggle" />
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<form id="logout-form" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post" style="display:none;"></form>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />

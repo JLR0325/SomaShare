@@ -1,14 +1,15 @@
-using SomaShare.Models;
+namespace SomaShare.Models;
 
-namespace SomaShare.Controllers
+public class UserProfileViewModel
 {
-    public class UserProfileViewModel
-    {
-        public ApplicationUser User { get; set; } = null!;
-        public List<Review> Reviews { get; set; } = new List<Review>();
-        public double AverageRating { get; set; }
-        public int ReviewCount { get; set; }
-        public List<Textbook> TextbookListings { get; set; } = new List<Textbook>();
-        public List<WantedAd> WantedAdListings { get; set; } = new List<WantedAd>();
-    }
+    public string Id { get; set; }
+    public string FullName { get; set; }
+    public string Email { get; set; }
+    public string Institution { get; set; }
+    public string Course { get; set; }
+    public string Campus { get; set; }
+    public double Rating { get; set; }
+    public string ProfileImageUrl { get; set; }
+    public int TextbooksCount { get; set; }
+    public int ReviewsCount { get; set; }
 }
