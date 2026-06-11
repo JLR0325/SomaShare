@@ -80,7 +80,7 @@
                             <h6><strong>Name:</strong> @otherUserName</h6>
                             <h6><strong>Institution:</strong> @ViewBag.OtherUserInstitution</h6>
                             <h6><strong>Course:</strong> @ViewBag.OtherUserCourse</h6>
-                            <h6><strong>Rating:</strong> <span class="badge bg-warning text-dark">@ViewBag.OtherUserRating.ToString("F1") ⭐</span></h6>
+                            <h6><strong>Rating:</strong> <span class="badge bg-warning text-dark">@ViewBag.OtherUserRating.ToString("F1")</span></h6>
                             <a href="@Url.Action("View", "Profile", new { userId = otherUserId })" class="btn btn-info btn-sm mt-2">View Full Profile</a>
                         </div>
                     </div>

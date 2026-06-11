@@ -24,7 +24,7 @@
             <span class="text-muted">@Model.Course</span>
         </p>
         <div class="text-center mb-2">
-            <span class="badge bg-warning text-dark">@Model.Rating.ToString("F1") ⭐</span>
+            <span class="badge bg-warning text-dark">@Model.Rating.ToString("F1")</span>
         </div>
         <a href="@Url.Action("View", "Profile", new { userId = Model.Id })" class="btn btn-sm btn-info w-100 mb-2">
             View Profile

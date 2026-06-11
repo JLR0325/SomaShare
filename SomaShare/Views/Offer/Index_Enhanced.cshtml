@@ -7,7 +7,7 @@
 }
 
 <div class="container mt-5">
-    <h1 class="mb-4">🤝 Active Offers</h1>
+    <h1 class="mb-4">Active Offers</h1>
 
     @if (Model.Any())
     {
@@ -45,13 +45,13 @@
                                 @switch (item.Status)
                                 {
                                     case "Pending":
-                                        <span class="badge bg-warning text-dark">⏳ Pending</span>
+                                        <span class="badge bg-warning text-dark">Pending</span>
                                         break;
                                     case "Accepted":
-                                        <span class="badge bg-success">✓ Accepted</span>
+                                        <span class="badge bg-success">Accepted</span>
                                         break;
                                     case "Declined":
-                                        <span class="badge bg-danger">✗ Declined</span>
+                                        <span class="badge bg-danger">Declined</span>
                                         break;
                                 }
                             </div>
